@@ -100,7 +100,8 @@ module StripeMock
       private
 
       def expand(payment_intent, params)
-        payment_intent[:latest_charge] = charges[payment_intent[:latest_charge]] if params[:expand]&.include? 'latest_charge'
+        payment_intent[:latest_charge] = charges[payment_intent[:latest_charge]] if params[:expand]&.join(',')&.include? 'latest_charge'
+        payment_intent[:latest_charge][:balance_transaction] = balance_transactions[payment_intent[:latest_charge][:balance_transaction]] if params[:expand]&.join(',')&.include? 'latest_charge.balance_transaction'
         payment_intent
       end
 
