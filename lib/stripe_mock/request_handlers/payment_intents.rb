@@ -103,8 +103,15 @@ module StripeMock
         joined = params[:expand]&.join(",")
         return payment_intent if joined == nil
 
-        payment_intent[:latest_charge] = charges[payment_intent[:latest_charge]] if joined.include? 'latest_charge'
-        payment_intent[:latest_charge][:balance_transaction] = balance_transactions[payment_intent[:latest_charge][:balance_transaction]] if joined.include? 'latest_charge.balance_transaction'
+        charge_id = payment_intent[:latest_charge]
+        if charge_id != nil && charge_id.kind_of?(String) && joined.include?('latest_charge')
+          payment_intent[:latest_charge] = charges[charge_id]
+        end
+
+        balance_transaction_id = payment_intent[:latest_charge][:balance_transaction]
+        if balance_transaction_id != nil && balance_transaction_id.kind_of?(String) && joined.include?('latest_charge.balance_transaction')
+          payment_intent[:latest_charge][:balance_transaction] = balance_transactions[balance_transaction_id]
+        end
         payment_intent
       end
 
