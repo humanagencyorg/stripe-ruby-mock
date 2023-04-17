@@ -18,6 +18,7 @@ module StripeMock
 
         ensure_payment_intent_required_params(params)
         status = case params[:amount]
+        when 3122 then 'processing'
         when 3184 then 'requires_action'
         when 3178 then 'requires_payment_method'
         when 3055 then 'requires_capture'

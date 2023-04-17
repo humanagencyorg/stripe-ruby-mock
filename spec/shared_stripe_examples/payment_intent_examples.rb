@@ -12,6 +12,16 @@ shared_examples 'PaymentIntent API' do
     expect(payment_intent.status).to eq('succeeded')
   end
 
+  it "creates a processing stripe payment_intent" do
+    payment_intent = Stripe::PaymentIntent.create(amount:  3122, currency: "usd")
+
+    expect(payment_intent.id).to match(/^test_pi/)
+    expect(payment_intent.amount).to eq(3122)
+    expect(payment_intent.currency).to eq('usd')
+    expect(payment_intent.metadata.to_hash).to eq({})
+    expect(payment_intent.status).to eq('processing')
+  end
+
   it "creates a requires_action stripe payment_intent when amount matches 3184" do
     payment_intent = Stripe::PaymentIntent.create(amount:  3184, currency: "usd")
 
