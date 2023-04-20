@@ -46,7 +46,7 @@ shared_examples 'PaymentIntent API' do
     expect(payment_intent.last_payment_error.message).to eq('Not enough funds.')
   end
 
-  it "creates a requires_payment_method stripe payment_intent when amount matches 3055" do
+  it "creates a requires_capture stripe payment_intent when amount matches 3055" do
     payment_intent = Stripe::PaymentIntent.create(amount: 3055, currency: "usd")
 
     expect(payment_intent.id).to match(/^test_pi/)
@@ -200,6 +200,20 @@ shared_examples 'PaymentIntent API' do
     updated = Stripe::PaymentIntent.retrieve(original.id)
 
     expect(updated.amount).to eq(200)
+  end
+
+  context "when a the payment_method is updated" do
+    it "sets the status to requires_confirmation" do
+      original = Stripe::PaymentIntent.create(amount: 3178, currency: "usd")
+      payment_intent = Stripe::PaymentIntent.retrieve(original.id)
+
+      payment_intent.payment_method = 'pm_usBankAccount_success'
+      payment_intent.save
+
+      updated = Stripe::PaymentIntent.retrieve(original.id)
+
+      expect(updated.status).to eq("requires_confirmation")
+    end
   end
 
   it 'when amount is not integer', live: true do
