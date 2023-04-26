@@ -160,7 +160,7 @@ module StripeMock
           if subscription[:plan]
             intent = Data.mock_payment_intent({
               status: intent_status,
-              amount: subscription[:plan][:amount] * subscription[:items][:data][0][:quantity],
+              amount: (subscription[:plan][:amount] || 1) * subscription[:items][:data][0][:quantity],
               currency: subscription[:plan][:currency]
             })
             payment_intents[intent[:id]] = intent
