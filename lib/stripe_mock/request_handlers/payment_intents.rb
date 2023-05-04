@@ -198,8 +198,11 @@ module StripeMock
         }
         calculate_fees(params)
         btxn = new_balance_transaction('txn', { source: payment_intent[:id], **params })
+        invoice = Data.mock_invoice([], {})
+
         charge = Data.mock_charge(
           balance_transaction: btxn,
+          invoice: invoice[:id],
           amount: payment_intent[:amount],
           currency: payment_intent[:currency],
           payment_method: payment_intent[:payment_method],
