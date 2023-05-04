@@ -161,7 +161,8 @@ module StripeMock
             intent = Data.mock_payment_intent({
               status: intent_status,
               amount: (subscription[:plan][:amount] || 1) * subscription[:items][:data][0][:quantity],
-              currency: subscription[:plan][:currency]
+              currency: subscription[:plan][:currency],
+              payment_method: {type: "card", card: {brand: "visa", last4: "4242"}}
             })
             payment_intents[intent[:id]] = intent
           else
@@ -169,7 +170,8 @@ module StripeMock
             intent = Data.mock_payment_intent({
               status: intent_status,
               amount: 500,
-              currency: 'USD'
+              currency: 'USD',
+              payment_method: {type: "card", card: {brand: "visa", last4: "4242"}}
             })
             payment_intents[intent[:id]] = intent
           end

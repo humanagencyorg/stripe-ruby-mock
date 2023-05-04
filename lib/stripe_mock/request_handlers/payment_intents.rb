@@ -30,7 +30,8 @@ module StripeMock
           params.merge(
             id: id,
             status: status,
-            last_payment_error: last_payment_error
+            last_payment_error: last_payment_error,
+            payment_method: {type: "card", card: {brand: "visa", last4: "4242"}}
           )
         )
 
