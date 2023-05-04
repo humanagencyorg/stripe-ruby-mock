@@ -30,8 +30,7 @@ module StripeMock
           params.merge(
             id: id,
             status: status,
-            last_payment_error: last_payment_error,
-            payment_method: {type: "card", card: {brand: "visa", last4: "4242"}}
+            last_payment_error: last_payment_error
           )
         )
 
@@ -105,9 +104,17 @@ module StripeMock
 
       def expand(payment_intent, params)
         return payment_intent unless params[:expand]
-        return payment_intent if payment_intent[:latest_charge].nil?
 
         expand_param = params[:expand]&.join(',')
+
+        if expand_param&.include? 'payment_intent'
+          if payment_intent[:payment_method].is_a?(String) || payment_intent[:payment_method].blank?
+            payment_intent[:payment_method] = {type: "card", card: {brand: "visa", last4: "4242"}}
+          end
+        end
+
+        return payment_intent if payment_intent[:latest_charge].nil?
+
         if expand_param&.include? 'latest_charge'
           payment_intent[:latest_charge] =
             StripeMock::Util.expand(charges, payment_intent, 'latest_charge')
