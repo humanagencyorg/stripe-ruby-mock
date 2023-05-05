@@ -113,6 +113,11 @@ module StripeMock
           end
         end
 
+        if expand_param&.include? 'invoice'
+          payment_intent[:invoice] =
+            StripeMock::Util.expand(invoices, payment_intent, 'invoice')
+        end
+
         return payment_intent if payment_intent[:latest_charge].nil?
 
         if expand_param&.include? 'latest_charge'
