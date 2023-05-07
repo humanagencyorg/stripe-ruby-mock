@@ -172,6 +172,31 @@ shared_examples 'PaymentIntent API' do
     expect(payment_intent.latest_charge.balance_transaction.status).to eq("pending")
   end
 
+  it "expands invoice" do
+    invoice = Stripe::Invoice.create
+    original = Stripe::PaymentIntent.create(
+      amount: 100, currency: "usd", invoice: invoice[:id]
+    )
+
+    payment_intent = Stripe::PaymentIntent.retrieve(
+      id: original.id, expand: ['invoice']
+    )
+
+    expect(payment_intent.invoice.id).to eq("test_in_1")
+  end
+
+  it "expands latest_charge.invoice" do
+    original = Stripe::PaymentIntent.create(
+      amount: 100, currency: "usd", confirm: true
+    )
+
+    payment_intent = Stripe::PaymentIntent.retrieve(
+      id: original.id, expand: ['latest_charge.invoice']
+    )
+
+    expect(payment_intent.latest_charge.invoice.id).to eq("in_test_invoice")
+  end
+
   it "confirms a stripe payment_intent" do
     payment_intent = Stripe::PaymentIntent.create(amount: 100, currency: "usd")
     confirmed_payment_intent = payment_intent.confirm()

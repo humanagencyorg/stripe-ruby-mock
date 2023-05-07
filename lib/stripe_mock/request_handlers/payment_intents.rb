@@ -128,6 +128,10 @@ module StripeMock
           payment_intent[:latest_charge][:balance_transaction] =
             StripeMock::Util.expand(balance_transactions, payment_intent, 'latest_charge.balance_transaction')
         end
+        if expand_param&.include? 'latest_charge.invoice'
+          payment_intent[:latest_charge][:invoice] =
+            StripeMock::Util.expand(invoices, payment_intent, 'latest_charge.invoice')
+        end
         payment_intent
       end
 
@@ -212,6 +216,7 @@ module StripeMock
         calculate_fees(params)
         btxn = new_balance_transaction('txn', { source: payment_intent[:id], **params })
         invoice = Data.mock_invoice([], {})
+        invoices[invoice[:id]] = invoice
 
         charge = Data.mock_charge(
           balance_transaction: btxn,
