@@ -159,6 +159,7 @@ module StripeMock
         unless subscription[:status] == 'trialing'
           if subscription[:plan]
             intent = Data.mock_payment_intent({
+              invoice: invoice[:id],
               status: intent_status,
               amount: (subscription[:plan][:amount] || 1) * subscription[:items][:data][0][:quantity],
               currency: subscription[:plan][:currency]
@@ -167,6 +168,7 @@ module StripeMock
           else
             # TODO - Update this to use prices
             intent = Data.mock_payment_intent({
+              invoice: invoice[:id],
               status: intent_status,
               amount: 500,
               currency: 'USD'
