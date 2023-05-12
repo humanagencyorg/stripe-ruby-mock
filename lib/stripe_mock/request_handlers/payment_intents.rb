@@ -108,8 +108,16 @@ module StripeMock
         expand_param = params[:expand]&.join(',')
 
         if expand_param&.include? 'payment_method'
-          if payment_intent[:payment_method].is_a?(String) || payment_intent[:payment_method].blank?
-            payment_intent[:payment_method] = {type: "card", card: {brand: "visa", last4: "4242"}}
+          if !payment_intent[:payment_method]
+             payment_intent[:payment_method] = {type: "card", card: {brand: "visa", last4: "4242"}}
+          else
+            payment_method = payment_methods[payment_intent[:payment_method]]
+            case payment_method[:type]
+            when 'card'
+              payment_intent[:payment_method] = { card: payment_method[:card] }
+            when 'us_bank_account'
+              payment_intent[:payment_method] = { us_bank_account: payment_method[:us_bank_account] }
+            end
           end
         end
 
