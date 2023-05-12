@@ -112,12 +112,9 @@ module StripeMock
              payment_intent[:payment_method] = {type: "card", card: {brand: "visa", last4: "4242"}}
           else
             payment_method = payment_methods[payment_intent[:payment_method]]
-            case payment_method[:type]
-            when 'card'
-              payment_intent[:payment_method] = { card: payment_method[:card] }
-            when 'us_bank_account'
-              payment_intent[:payment_method] = { us_bank_account: payment_method[:us_bank_account] }
-            end
+
+            payment_intent[:payment_method] =
+              StripeMock::Util.expand(payment_methods, payment_intent, 'payment_method')
           end
         end
 
