@@ -223,6 +223,20 @@ shared_examples 'PaymentIntent API' do
     expect(payment_intent.payment_method.us_bank_account.bank_name).to eq("STRIPE TEST BANK")
   end
 
+  it "expands payment_method on update" do
+    payment_method = Stripe::PaymentMethod.create(type: 'us_bank_account', last4: '1776', bank_name: 'STRIPE TEST BANK')
+    original = Stripe::PaymentIntent.create(
+      amount: 100, currency: "usd", confirm: true, payment_method: payment_method.id
+    )
+
+    payment_intent = Stripe::PaymentIntent.update(
+      original.id, { amount: 500, expand: ['payment_method'] }
+    )
+
+    expect(payment_intent.payment_method.us_bank_account.last4).to eq("6789")
+    expect(payment_intent.payment_method.us_bank_account.bank_name).to eq("STRIPE TEST BANK")
+  end
+
   it "confirms a stripe payment_intent" do
     payment_intent = Stripe::PaymentIntent.create(amount: 100, currency: "usd")
     confirmed_payment_intent = payment_intent.confirm()

@@ -48,7 +48,7 @@ module StripeMock
         payment_intent = assert_existence :payment_intent, id, payment_intents[id]
         payment_intents[id] = Util.rmerge(payment_intent, params.select{ |k,v| ALLOWED_PARAMS.include?(k)})
         payment_intents[id][:status] = "requires_confirmation" if params[:payment_method]
-        payment_intents[id]
+        expand(payment_intents[id], params)
       end
 
       def get_payment_intents(route, method_url, params, headers)
