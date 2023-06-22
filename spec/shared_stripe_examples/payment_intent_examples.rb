@@ -247,7 +247,9 @@ shared_examples 'PaymentIntent API' do
 
   it "confirming a payment intent for us_bank_account sets status to processing" do
     payment_intent = Stripe::PaymentIntent.create(amount: 100, currency: "usd")
-    confirmed_payment_intent = payment_intent.confirm(payment_method: "us_bank_account")
+    payment_intent.confirm(payment_method: "pm_usBankAccount_success")
+
+    confirmed_payment_intent = Stripe::PaymentIntent.retrieve(payment_intent.id)
     expect(confirmed_payment_intent.status).to eq("processing")
     expect(confirmed_payment_intent.charges.data.size).to eq(0)
   end

@@ -68,7 +68,6 @@ module StripeMock
         route =~ method_url
         payment_intent_id = $1 || params[:payment_intent]
         payment_intent = assert_existence :payment_intent, payment_intent_id, payment_intents[payment_intent_id]
-
         payment_intent = payment_intent.clone
 
         expand(payment_intent, params)
@@ -90,7 +89,7 @@ module StripeMock
         end
 
         case params[:payment_method]
-        when 'us_bank_account'
+        when 'pm_usBankAccount_success'
           processing_payment_intent(payment_intent)
         else
           succeeded_payment_intent(payment_intent)
