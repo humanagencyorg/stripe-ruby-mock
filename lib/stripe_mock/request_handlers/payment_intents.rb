@@ -89,7 +89,12 @@ module StripeMock
           payment_intent[:payment_method] = params[:payment_method]
         end
 
-        succeeded_payment_intent(payment_intent)
+        case params[:payment_method]
+        when 'us_bank_account'
+          processing_payment_intent(payment_intent)
+        else
+          succeeded_payment_intent(payment_intent)
+        end
       end
 
       def cancel_payment_intent(route, method_url, params, headers)
@@ -206,6 +211,12 @@ module StripeMock
           },
           type: "invalid_request_error"
         }
+      end
+
+      def processing_payment_intent(payment_intent)
+        payment_intent[:status] = 'processing'
+
+        payment_intent
       end
 
       def succeeded_payment_intent(payment_intent)
