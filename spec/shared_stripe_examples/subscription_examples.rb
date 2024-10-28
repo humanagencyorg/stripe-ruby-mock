@@ -1454,7 +1454,7 @@ shared_examples 'Customer Subscriptions with plans' do
         source: gen_card_tk
       })
 
-      backdate_start_date = 2.months.ago.to_i
+      backdate_start_date = (DateTime.now >> 1).to_time.to_i
       subscription = Stripe::Subscription.create(
         customer: customer.id,
         backdate_start_date:,
