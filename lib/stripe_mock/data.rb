@@ -403,7 +403,8 @@ module StripeMock
         next_pending_invoice_item_invoice: nil,
         latest_invoice: nil,
         description: nil,
-        schedule: nil
+        schedule: nil,
+        backdate_start_date: nil
       }, params)
     end
 

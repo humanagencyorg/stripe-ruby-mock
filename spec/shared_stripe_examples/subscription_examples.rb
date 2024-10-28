@@ -1439,6 +1439,30 @@ shared_examples 'Customer Subscriptions with plans' do
 
       expect(subscription.description).to eq(description)
     end
+
+    it "saves a backdate_start_date" do
+      stripe_helper.
+        create_plan(
+        :amount => 500,
+        :interval => 'month',
+        :product => product.id,
+        :currency => 'usd',
+        :id => 'Sample5'
+      )
+      customer = Stripe::Customer.create({
+        email: 'johnny@appleseed.com',
+        source: gen_card_tk
+      })
+
+      backdate_start_date = 2.months.ago.to_i
+      subscription = Stripe::Subscription.create(
+        customer: customer.id,
+        backdate_start_date:,
+        items: [{plan: "Sample5", metadata: {foo: 'bar'}}],
+      )
+
+      expect(subscription.backdate_start_date).to eq(backdate_start_date)
+    end
   end
 end
 
