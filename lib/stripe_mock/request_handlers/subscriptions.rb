@@ -151,6 +151,10 @@ module StripeMock
           subscription[:description] = params[:description]
         end
 
+        if params[:backdate_start_date]
+          subscription[:backdate_start_date] = params[:backdate_start_date]
+        end
+
         charge = nil
         intent_status = subscription[:status] == 'incomplete' ? 'requires_payment_method' : 'succeeded'
         invoice = Data.mock_invoice([], {})
