@@ -1463,6 +1463,31 @@ shared_examples 'Customer Subscriptions with plans' do
 
       expect(subscription.backdate_start_date).to eq(backdate_start_date)
     end
+
+    it "saves a billing_cycle_anchor_config" do
+      stripe_helper.
+        create_plan(
+        :amount => 500,
+        :interval => 'month',
+        :product => product.id,
+        :currency => 'usd',
+        :id => 'Sample5'
+      )
+      customer = Stripe::Customer.create({
+        email: 'johnny@appleseed.com',
+        source: gen_card_tk
+      })
+
+      subscription = Stripe::Subscription.create(
+        customer: customer.id,
+        billing_cycle_anchor_config: {
+          day_of_month: 1,
+        },
+        items: [{plan: "Sample5", metadata: {foo: 'bar'}}],
+      )
+
+      expect(subscription.billing_cycle_anchor_config.day_of_month).to eq(1)
+    end
   end
 end
 
