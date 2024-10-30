@@ -404,7 +404,8 @@ module StripeMock
         latest_invoice: nil,
         description: nil,
         schedule: nil,
-        backdate_start_date: nil
+        backdate_start_date: nil,
+        billing_cycle_anchor_config: nil
       }, params)
     end
 
