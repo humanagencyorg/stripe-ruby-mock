@@ -315,6 +315,7 @@ module StripeMock
 
         params[:current_period_start] = subscription[:current_period_start]
         params[:trial_end] = params[:trial_end] || subscription[:trial_end]
+        params[:billing_cycle_anchor] = params[:billing_cycle_anchor] || subscription[:billing_cycle_anchor]
 
         plan_amount_was = subscription.dig(:plan, :amount)
 
