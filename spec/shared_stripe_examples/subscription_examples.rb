@@ -1295,6 +1295,28 @@ shared_examples 'Customer Subscriptions with plans' do
     Stripe::Subscription.create options
   end
 
+  it "does not override billing cycle anchor when billing cycle anchor is not set" do
+    product = stripe_helper.create_product(name: 'Silver Product')
+    stripe_helper.create_plan(id: 'silver', product: product.id, amount: 100, currency: 'usd', interval: 'month')
+    customer = Stripe::Customer.create(id: 'test_customer_sub', source: gen_card_tk, plan: 'silver')
+    billing_cycle_anchor = Time.now.utc.to_i + 3600
+    metadata = {description: 'original description'}
+
+    sub = Stripe::Subscription.create({ plan: 'silver', customer: customer.id, billing_cycle_anchor:, metadata: })
+
+    expect(sub.object).to eq('subscription')
+    expect(sub.billing_cycle_anchor).to eq(billing_cycle_anchor)
+    expect(sub.metadata.description).to eq(metadata[:description])
+
+    metadata = {description: 'updated description'}
+    sub = Stripe::Subscription.update(sub.id, { metadata: })
+
+    expect(sub.object).to eq('subscription')
+    expect(sub.billing_cycle_anchor).to eq(billing_cycle_anchor)
+    expect(sub.metadata.description).to eq(metadata[:description]) # check that the description has changed
+  end
+
+
   context 'retrieving a single subscription' do
     let(:customer) { Stripe::Customer.create(id: 'test_customer_sub', source: gen_card_tk, plan: 'free') }
     let(:subscription) { Stripe::Subscription.retrieve(customer.subscriptions.data.first.id) }
